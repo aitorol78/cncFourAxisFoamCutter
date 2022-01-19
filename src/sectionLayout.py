@@ -17,12 +17,12 @@ class sectionLayout(sectionProfile):
         self.sectionCoordinatesY = np.zeros(1)
 
     def computeCoordinates(self):
-        profileChord = computeProfileChord(self)
+        profileChord = self.computeProfileChord()
         scale = self.chord / profileChord
         angle = self.washoutAngle_deg * math.pi / 180
         rotationMatrix = np.array([[math.cos(angle),-math.sin(angle)],[math.sin(angle),math.cos(angle)]])
         
-        pointsProfileDefinition = np.transpose(np.array([self.profileCoordinatesX self.profileCoordinatesY]))
+        pointsProfileDefinition = np.array([self.profileCoordinatesX, self.profileCoordinatesY])
         pointsLayout = np.matmul(scale * rotationMatrix, pointsProfileDefinition)
 
         self.sectionCoordinatesX = pointsLayout[0,:]                           # shape ?? 1xN   Nx1
