@@ -3,13 +3,13 @@ from sectionLayout import sectionLayout
 
 class wingPanelLayout:
     def __init__(self):
-        self.spSection = sectionLayout()
-        self.spZposition = 0
-        self.spleadingEdgeX = 0
+        self.sectionPlusLayout = sectionLayout()
+        self.sectionPlusZposition = 0
+        self.sectionPlusLeadingEdgeX = 0
 
-        self.smSection = sectionLayout()
-        self.smZposition = 0
-        self.smleadingEdgeX = 0
+        self.sectionMinusLayout = sectionLayout()
+        self.sectionMinusZposition = 0
+        self.sectionMinusLeadingEdgeX = 0
         
         self.leadInDistance = 10
         self.leadOutDistance = 20
