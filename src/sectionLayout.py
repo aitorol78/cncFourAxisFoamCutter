@@ -16,6 +16,9 @@ class sectionLayout(sectionProfile):
         self.sectionCoordinatesX = np.zeros(1)
         self.sectionCoordinatesY = np.zeros(1)
 
+        self.indUpperSurface = np.zeros(1)
+        self.indLowerSurface = np.zeros(1)
+
     def computeCoordinates(self):
         profileChord = self.computeProfileChord()
         scale = self.chord / profileChord
@@ -30,3 +33,28 @@ class sectionLayout(sectionProfile):
 
     def computeProfileChord(self):
         return np.abs( np.max(self.profileCoordinatesX) - np.min(self.profileCoordinatesX) )
+
+    def splitUpperLowerSurfaces(self):
+        ind = np.argmin(self.profileCoordinatesX)
+        self.indUpperSurface = range(0,ind+1)
+        self.indLowerSurface = range(ind, len(self.profileCoordinatesX))
+
+    def computeLengthOfUpperSurface(self):
+        dx = np.diff(self.sectionCoordinatesX[self.indUpperSurface])
+        dy = np.diff(self.sectionCoordinatesY[self.indUpperSurface])
+        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+        ds = np.sqrt(dsSq)
+        S = sum(ds)
+        return S
+    def computeLengthOfLowerSurface(self):
+        dx = np.diff(self.sectionCoordinatesX[self.indLowerSurface])
+        dy = np.diff(self.sectionCoordinatesY[self.indLowerSurface])
+        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+        ds = np.sqrt(dsSq)
+        S = sum(ds)
+        return S
+
+    #def interpolateProperlySpacedNPoints(self, numPoints):
+        #np.interp(newIndex, index, vector)
+
+    
