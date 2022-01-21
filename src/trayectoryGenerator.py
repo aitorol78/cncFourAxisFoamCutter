@@ -1,5 +1,3 @@
-
-
 from machine import machine
 from wingPanelLayout import wingPanelLayout
 from geom3d import line3d, plane3d, geom3d
@@ -13,6 +11,7 @@ class trayectoryGenerator:
 
         self.numStationsUpperSurface = 100
         self.numStationsLowerSurface = 100
+        self.velocity = 300
 
         self.sectionPlusResampledCoordinatesX = np.zeros(1)
         self.sectionPlusResampledCoordinatesY = np.zeros(1)
@@ -89,6 +88,20 @@ class trayectoryGenerator:
         self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wirePlusZpositon)
         self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wireMinusZpositon)
 
+    def generateVelocityVectors(self):
+        numSegments = len(self.wirePlusTrayectoryX)-1
+        dsPlus = self.computeLengthOfSegments(self.wirePlusTrayectoryX, self.wirePlusTrayectoryY)
+        dsMinus = self.computeLengthOfSegments(self.wireMinusTrayectoryX, self.wireMinusTrayectoryY)
+        dsPM = np.vstack([dsPlus, dsMinus])
+        dsMax = np.max(dsPM,0)
+        self.wirePlusTrayectoryF = self.velocity * np.divide(dsPlus,dsMax)
+        self.wireMinusTrayectoryF = self.velocity * np.divide(dsMinus,dsMax)
+
+        # add velocity to approximate to the first point
+        # it will require a timed stop before starting movement to second point
+        # to ensure that both profiles start at the very same time
+        self.wirePlusTrayectoryF = np.hstack([self.velocity, self.wirePlusTrayectoryF]) 
+        self.wireMinusTrayectoryF = np.hstack([self.velocity, self.wireMinusTrayectoryF])
 
     def resampleSectionPoints(self, section):
         newIndexes = np.linspace(min(section.indUpperSurface), max(section.indUpperSurface), self.numStationsUpperSurface)
@@ -143,3 +156,19 @@ class trayectoryGenerator:
             pointsXYZ[1,ii] = pointWire[1]
 
         return pointsXYZ[0,:], pointsXYZ[1,:]
+
+    #def computeLengthOfCurve(self, x, y):
+    #    dx = np.diff(x)
+    #    dy = np.diff(y)
+    #    dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+    #    ds = np.sqrt(dsSq)
+    #    S = sum(ds)
+    #    return S
+
+    def computeLengthOfSegments(self, x, y):
+        dx = np.diff(x)
+        dy = np.diff(y)
+        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+        ds = np.sqrt(dsSq)
+        return ds
+        

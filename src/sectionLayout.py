@@ -1,4 +1,3 @@
-
 import numpy as np
 import math
 from sectionProfile import sectionProfile
@@ -36,7 +35,7 @@ class sectionLayout(sectionProfile):
 
     def splitUpperLowerSurfaces(self):
         ind = np.argmin(self.profileCoordinatesX)
-        self.indUpperSurface = range(0,ind+1)
+        self.indUpperSurface = range(0,ind)
         self.indLowerSurface = range(ind, len(self.profileCoordinatesX))
 
 #    def computeLengthOfUpperSurface(self):

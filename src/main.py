@@ -5,6 +5,7 @@ import os
 from numpy import transpose
 from sectionLayout import sectionLayout
 from trayectoryGenerator import trayectoryGenerator
+from trayectoryExecutor import trayectoryExecutor
 from wingPanelLayout import wingPanelLayout
 from geom3d import geom3d, plane3d, line3d
 from machine import machine
@@ -48,7 +49,15 @@ if __name__ == "__main__":
     tr.wpl = wpl
     tr.numPointsLowerSurface = 100
     tr.numPointUpperSurface = 100
+    tr.velocity = 300
     tr.generateTrayectory()
+    tr.generateVelocityVectors()
+
+    ex = trayectoryExecutor()
+    ex.sleepTimeAtFirstPoint = 5
+    ex.goToFirstPoint(tr)
+    ex.waitAtFirstPoint()
+    ex.followTrayectoryFromSecondPoint(tr)
 
     #fig, axs = plt.subplots(4, 1, sharex=True, sharey=False)
     #fig.suptitle('section profile')
