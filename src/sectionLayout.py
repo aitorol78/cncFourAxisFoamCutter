@@ -19,7 +19,7 @@ class sectionLayout(sectionProfile):
         self.indUpperSurface = np.zeros(1)
         self.indLowerSurface = np.zeros(1)
 
-    def computeCoordinates(self):
+    def computeSectionCoordinates(self):
         profileChord = self.computeProfileChord()
         scale = self.chord / profileChord
         angle = self.washoutAngle_deg * math.pi / 180
@@ -39,20 +39,20 @@ class sectionLayout(sectionProfile):
         self.indUpperSurface = range(0,ind+1)
         self.indLowerSurface = range(ind, len(self.profileCoordinatesX))
 
-    def computeLengthOfUpperSurface(self):
-        dx = np.diff(self.sectionCoordinatesX[self.indUpperSurface])
-        dy = np.diff(self.sectionCoordinatesY[self.indUpperSurface])
-        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
-        ds = np.sqrt(dsSq)
-        S = sum(ds)
-        return S
-    def computeLengthOfLowerSurface(self):
-        dx = np.diff(self.sectionCoordinatesX[self.indLowerSurface])
-        dy = np.diff(self.sectionCoordinatesY[self.indLowerSurface])
-        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
-        ds = np.sqrt(dsSq)
-        S = sum(ds)
-        return S
+#    def computeLengthOfUpperSurface(self):
+#        dx = np.diff(self.sectionCoordinatesX[self.indUpperSurface])
+#        dy = np.diff(self.sectionCoordinatesY[self.indUpperSurface])
+#        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+#        ds = np.sqrt(dsSq)
+#        S = sum(ds)
+#        return S
+#    def computeLengthOfLowerSurface(self):
+#        dx = np.diff(self.sectionCoordinatesX[self.indLowerSurface])
+#        dy = np.diff(self.sectionCoordinatesY[self.indLowerSurface])
+#        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+#        ds = np.sqrt(dsSq)
+#        S = sum(ds)
+#        return S
 
     #def interpolateProperlySpacedNPoints(self, numPoints):
         #np.interp(newIndex, index, vector)

@@ -11,7 +11,7 @@ class wingPanelLayout:
         self.sectionMinusZposition = 0
         self.sectionMinusLeadingEdgeX = 0
         
-        self.leadInDistance = 10
+        self.leadInDistance = 20
         self.leadOutDistance = 20
 
         self.skinThickness = 0
