@@ -17,13 +17,13 @@ if __name__ == "__main__":
 
     sectionLayoutZplus = sectionLayout()
     sectionLayoutZplus.loadFromFile(os.path.join('data','profiles','ag25.dat')) 
-    sectionLayoutZplus.chord = 50
+    sectionLayoutZplus.chord = 230
     sectionLayoutZplus.washoutAngle_deg = 0
     sectionLayoutZplus.templateHeight = 0   
 
     sectionLayoutZminus = sectionLayout()
     sectionLayoutZminus.loadFromFile(os.path.join('data','profiles','ag25.dat'))
-    sectionLayoutZminus.chord = 50
+    sectionLayoutZminus.chord = 230
     sectionLayoutZminus.washoutAngle_deg = 0
     sectionLayoutZminus.templateHeight = 0
 
@@ -34,10 +34,10 @@ if __name__ == "__main__":
     wpl.sectionMinusLayout = sectionLayoutZminus
     wpl.sectionMinusZposition = 100
     wpl.sectionMinusLeadingEdgeX = 0
-    wpl.leadInDistance = 0
+    wpl.leadInDistance = 20
     wpl.leadOutDistance = 20
     wpl.skinThickness = 0
-    wpl.wireThickness = 0.2
+    wpl.wireThickness = 2
     wpl.foamThickness = 0
 
     mch = machine()
@@ -50,13 +50,14 @@ if __name__ == "__main__":
     tr.wpl = wpl
     tr.numStationsUpperSurface = 100
     tr.numStationsLowerSurface = 100
-    tr.velocity = 1000
+    tr.velocity = 200
     tr.generateTrayectory()
     tr.generateVelocityVectors()
+    tr.compensateWireThickness()
 
     ex = trayectoryExecutor()
-    ex.portPlus="/dev/ttyUSB1"
-    ex.portMinus="/dev/ttyUSB0"
+    ex.portPlus="/dev/ttyUSB0"
+    ex.portMinus="/dev/ttyUSB1"
     ex.flagUsePlus = True
     ex.flagUseMinus = True
     ex.connectToServos()

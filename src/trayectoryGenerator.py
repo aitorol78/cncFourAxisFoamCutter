@@ -103,7 +103,28 @@ class trayectoryGenerator:
         # to ensure that both profiles start at the very same time
         self.wirePlusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wirePlusTrayectoryF[1:]])
         self.wireMinusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wireMinusTrayectoryF[1:]])
-        
+    
+    def compensateWireThickness(self):
+        # compute normal to curve
+        # add distance, wireThickness, in the direction of the normal to each point
+        self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = \
+            self.computeCurveAtDistance(self.wirePlusTrayectoryX, self.wirePlusTrayectoryY, self.wpl.wireThickness)
+        self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = \
+            self.computeCurveAtDistance(self.wireMinusTrayectoryX, self.wireMinusTrayectoryY, self.wpl.wireThickness)
+
+    def computeCurveAtDistance(self, curveX, curveY, distance):
+        dx = -np.diff(curveX)
+        dy = -np.diff(curveY)
+        dx = np.hstack([dx[0],dx])
+        dy = np.hstack([dy[0],dy])
+        dsSq = np.multiply(dx, dx) + np.multiply(dy,dy)
+        ds = np.sqrt(dsSq)
+        nx = np.divide(-dy, ds)
+        ny = np.divide(dx, ds)
+        curveX = curveX + nx*distance
+        curveY = curveY + ny*distance
+        return curveX, curveY
+
     def resampleSectionPoints(self, section):
         newIndexes = np.linspace(min(section.indUpperSurface), max(section.indUpperSurface), self.numStationsUpperSurface)
         resampledSectionCoordinatesXUpperSurf = np.interp(newIndexes, section.indUpperSurface, section.sectionCoordinatesX[section.indUpperSurface])
