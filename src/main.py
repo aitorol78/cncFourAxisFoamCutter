@@ -50,15 +50,15 @@ if __name__ == "__main__":
     tr.wpl = wpl
     tr.numStationsUpperSurface = 100
     tr.numStationsLowerSurface = 100
-    tr.velocity = 200
+    tr.velocity = 1000
     tr.generateTrayectory()
     tr.generateVelocityVectors()
 
     ex = trayectoryExecutor()
-    ex.portPlus="/dev/ttyUSB0"
-    ex.portMinus="/dev/ttyUSB1"
+    ex.portPlus="/dev/ttyUSB1"
+    ex.portMinus="/dev/ttyUSB0"
     ex.flagUsePlus = True
-    ex.flagUseMinus = False
+    ex.flagUseMinus = True
     ex.connectToServos()
     ex.sleepTimeAtFirstPoint = 5
     tr.wirePlusTrayectoryX = tr.wirePlusTrayectoryX - tr.wirePlusTrayectoryX[0]

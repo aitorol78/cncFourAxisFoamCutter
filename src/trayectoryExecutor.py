@@ -28,7 +28,7 @@ class trayectoryExecutor:
             self.sMinus.write(('\r\n\r\n').encode())
             time.sleep(2)
             while self.sMinus.inWaiting():
-                print([self.sMinus.readline() + '\n'])
+                print([self.sMinus.readline()])
             self.sMinus.flushInput()
 
     def goToFirstPoint(self, tr):
@@ -47,28 +47,60 @@ class trayectoryExecutor:
         time.sleep(self.sleepTimeAtFirstPoint)
 
     def followTrayectoryFromSecondPoint(self, tr):
-#log    f = open(os.path.join('data','debugLogs','executorLog.txt'), 'w+')
+        f = open(os.path.join('data','debugLogs','executorLogPlusMinus.txt'), 'w+')
         numPoints = len(tr.wirePlusTrayectoryX)
-        self.sPlus.flushInput()
-        nextPoint = 1
-        charCount = []
-        linePlus = []
-        while nextPoint < numPoints:
-            logLine = ('nextPoint {} sum(charCount) {} len(linePlus) {} inWaiting() {} linePlus: {}\n').format(nextPoint, sum(charCount), len(linePlus), self.sPlus.inWaiting(), linePlus)
-            print(logLine)
-#log        f.write(logLine)
-            if self.sPlus.inWaiting():
-                responseLine = self.sPlus.readline().strip().decode()
-                if (responseLine.find('ok') > -1) | (responseLine.find('error') > -1):
-                    del charCount[0]
-            linePlus = ('G1X{x:.3f}Y{y:.3f}F{z:.1f}\n').format(x=tr.wirePlusTrayectoryX[nextPoint], y=tr.wirePlusTrayectoryY[nextPoint], z=tr.wirePlusTrayectoryF[nextPoint])
-            if sum(charCount) + len(linePlus) < self.GRBL_RX_BUFFER_SIZE - 2:
-                self.sPlus.write(linePlus.encode())
-                nextPoint = nextPoint + 1 
-                charCount.append(len(linePlus))
-            #time.sleep(0.1)
-#log    f.close()
+        if self.flagUsePlus:
+            self.sPlus.flushInput()
+        if self.flagUseMinus:
+            self.sMinus.flushInput()
+        nextPointPlus = nextPointMinus = 1  # second point
+        charCountPlus = charCountMinus = []
+        linePlus = lineMinus = []
+        logLinePlus = 'Plus not in use'
+        logLineMinus = 'Minus not in use'
+        flagPlusNotFinished = flagMinusNotFinished = True
 
+        while (flagPlusNotFinished | flagMinusNotFinished):
+            
+            if (self.flagUsePlus & flagPlusNotFinished):
+                logLinePlus = ('nextPointPlus {} sum(charCountPlus) {} len(linePlus) {} inWaitingPlus() {} linePlus: {}').format(nextPointPlus, sum(charCountPlus), len(linePlus), self.sPlus.inWaiting(), linePlus)
+                if self.sPlus.inWaiting()>3:
+                    responseLine = self.sPlus.readline().strip().decode()
+                    if (responseLine.find('ok') > -1) | (responseLine.find('error') > -1):
+                        del charCountPlus[0]
+                linePlus = ('G1X{x:.3f}Y{y:.3f}F{z:.1f}\n').format(x=tr.wirePlusTrayectoryX[nextPointPlus], y=tr.wirePlusTrayectoryY[nextPointPlus], z=tr.wirePlusTrayectoryF[nextPointPlus])
+                if sum(charCountPlus) + len(linePlus) < self.GRBL_RX_BUFFER_SIZE - 2:
+                    self.sPlus.write(linePlus.encode())
+                    nextPointPlus = nextPointPlus + 1 
+                    charCountPlus.append(len(linePlus))
+                    if nextPointPlus >= numPoints:
+                        flagPlusNotFinished = False
+            else:
+                flagPlusNotFinished = False
+            
+            if (self.flagUseMinus & flagMinusNotFinished):
+                logLineMinus = ('nextPointMinus {} sum(charCountMinus) {} len(lineMinus) {} inWaitingMinus() {} lineMinus: {}').format(nextPointMinus, sum(charCountMinus), len(lineMinus), self.sMinus.inWaiting(), lineMinus)
+                if self.sMinus.inWaiting()>3:
+                    responseLine = self.sMinus.readline().strip().decode()
+                    if (responseLine.find('ok') > -1) | (responseLine.find('error') > -1):
+                        del charCountMinus[0]
+                lineMinus = ('G1X{x:.3f}Y{y:.3f}F{z:.1f}\n').format(x=tr.wireMinusTrayectoryX[nextPointMinus], y=tr.wireMinusTrayectoryY[nextPointMinus], z=tr.wireMinusTrayectoryF[nextPointMinus])
+                if sum(charCountMinus) + len(lineMinus) < self.GRBL_RX_BUFFER_SIZE - 2:
+                    self.sMinus.write(lineMinus.encode())
+                    nextPointMinus = nextPointMinus + 1 
+                    charCountMinus.append(len(lineMinus))
+                    if nextPointMinus >= numPoints:
+                        flagMinusNotFinished = False
+            else:
+                flagMinusNotFinished = False
+
+            print('\n\n' + logLinePlus)
+            print('\n' + logLineMinus)
+            f.write('\n\n' + logLinePlus)
+            f.write('\n\n' + logLineMinus)
+
+            #time.sleep(0.1)
+        f.close()
 
 
 
