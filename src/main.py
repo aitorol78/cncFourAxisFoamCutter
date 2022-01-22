@@ -16,16 +16,16 @@ from mpl_toolkits.mplot3d import Axes3D
 if __name__ == "__main__":
 
     sectionLayoutZplus = sectionLayout()
-    sectionLayoutZplus.loadFromFile(os.path.join('data','profiles','sipkill1710b.dat'))
-    sectionLayoutZplus.chord = 8.5*25.4
+    sectionLayoutZplus.loadFromFile(os.path.join('data','profiles','ag25.dat')) 
+    sectionLayoutZplus.chord = 50
     sectionLayoutZplus.washoutAngle_deg = 0
-    sectionLayoutZplus.templateHeight = 10
+    sectionLayoutZplus.templateHeight = 0   
 
     sectionLayoutZminus = sectionLayout()
-    sectionLayoutZminus.loadFromFile(os.path.join('data','profiles','MH60.dat'))
-    sectionLayoutZminus.chord = 4.5*25.4
-    sectionLayoutZminus.washoutAngle_deg = 3
-    sectionLayoutZminus.templateHeight = 10
+    sectionLayoutZminus.loadFromFile(os.path.join('data','profiles','ag25.dat'))
+    sectionLayoutZminus.chord = 50
+    sectionLayoutZminus.washoutAngle_deg = 0
+    sectionLayoutZminus.templateHeight = 0
 
     wpl = wingPanelLayout()
     wpl.sectionPlusLayout = sectionLayoutZplus
@@ -33,8 +33,8 @@ if __name__ == "__main__":
     wpl.sectionPlusLeadingEdgeX = 0
     wpl.sectionMinusLayout = sectionLayoutZminus
     wpl.sectionMinusZposition = 100
-    wpl.sectionMinusLeadingEdgeX = 350
-    wpl.leadInDistance = 10
+    wpl.sectionMinusLeadingEdgeX = 0
+    wpl.leadInDistance = 0
     wpl.leadOutDistance = 20
     wpl.skinThickness = 0
     wpl.wireThickness = 0.2
@@ -45,16 +45,26 @@ if __name__ == "__main__":
     mch.wireMinusZpositon = 0
 
     tr = trayectoryGenerator()
+
     tr.machine = mch
     tr.wpl = wpl
-    tr.numPointsLowerSurface = 100
-    tr.numPointUpperSurface = 100
-    tr.velocity = 300
+    tr.numStationsUpperSurface = 100
+    tr.numStationsLowerSurface = 100
+    tr.velocity = 200
     tr.generateTrayectory()
     tr.generateVelocityVectors()
 
     ex = trayectoryExecutor()
+    ex.portPlus="/dev/ttyUSB0"
+    ex.portMinus="/dev/ttyUSB1"
+    ex.flagUsePlus = True
+    ex.flagUseMinus = False
+    ex.connectToServos()
     ex.sleepTimeAtFirstPoint = 5
+    tr.wirePlusTrayectoryX = tr.wirePlusTrayectoryX - tr.wirePlusTrayectoryX[0]
+    tr.wirePlusTrayectoryY = tr.wirePlusTrayectoryY - tr.wirePlusTrayectoryY[0]
+    tr.wireMinusTrayectoryX = tr.wireMinusTrayectoryX - tr.wireMinusTrayectoryX[0]
+    tr.wireMinusTrayectoryY = tr.wireMinusTrayectoryY - tr.wireMinusTrayectoryY[0]
     ex.goToFirstPoint(tr)
     ex.waitAtFirstPoint()
     ex.followTrayectoryFromSecondPoint(tr)
