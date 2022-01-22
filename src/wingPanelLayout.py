@@ -17,6 +17,3 @@ class wingPanelLayout:
         self.skinThickness = 0
         self.wireThickness = 0.2
         self.foamThickness = 0
-
-    def methodTemplate(self):
-        a = 77
