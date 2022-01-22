@@ -98,11 +98,12 @@ class trayectoryGenerator:
         self.wireMinusTrayectoryF = self.velocity * np.divide(dsMinus,dsMax)
 
         # add velocity to approximate to the first point
+        # and modify ill calculated first velocity (0/0 division)
         # it will require a timed stop before starting movement to second point
         # to ensure that both profiles start at the very same time
-        self.wirePlusTrayectoryF = np.hstack([self.velocity, self.wirePlusTrayectoryF]) 
-        self.wireMinusTrayectoryF = np.hstack([self.velocity, self.wireMinusTrayectoryF])
-
+        self.wirePlusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wirePlusTrayectoryF[1:]])
+        self.wireMinusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wireMinusTrayectoryF[1:]])
+        
     def resampleSectionPoints(self, section):
         newIndexes = np.linspace(min(section.indUpperSurface), max(section.indUpperSurface), self.numStationsUpperSurface)
         resampledSectionCoordinatesXUpperSurf = np.interp(newIndexes, section.indUpperSurface, section.sectionCoordinatesX[section.indUpperSurface])
