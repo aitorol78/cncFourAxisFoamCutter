@@ -19,17 +19,19 @@ class trayectoryExecutor:
         if self.flagUsePlus:
             self.sPlus = serial.Serial(port=self.portPlus, baudrate=115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, xonxoff=False, rtscts=False, write_timeout=None, dsrdtr=False, inter_byte_timeout=None, exclusive=None)
             self.sPlus.write(('\r\n\r\n').encode())
-            time.sleep(2)
+        if self.flagUseMinus:
+            self.sMinus = serial.Serial(port=self.portMinus, baudrate=115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, xonxoff=False, rtscts=False, write_timeout=None, dsrdtr=False, inter_byte_timeout=None, exclusive=None)
+            self.sMinus.write(('\r\n\r\n').encode())
+        time.sleep(2)
+        if self.flagUsePlus:
             while self.sPlus.inWaiting():
                 print(self.sPlus.readline())
             self.sPlus.flushInput()
         if self.flagUseMinus:
-            self.sMinus = serial.Serial(port=self.portMinus, baudrate=115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=0.5, xonxoff=False, rtscts=False, write_timeout=None, dsrdtr=False, inter_byte_timeout=None, exclusive=None)
-            self.sMinus.write(('\r\n\r\n').encode())
-            time.sleep(2)
             while self.sMinus.inWaiting():
                 print([self.sMinus.readline()])
             self.sMinus.flushInput()
+
 
     def goToFirstPoint(self, tr):
         if self.flagUsePlus:
@@ -63,7 +65,8 @@ class trayectoryExecutor:
         while (flagPlusNotFinished | flagMinusNotFinished):
             
             if (self.flagUsePlus & flagPlusNotFinished):
-                logLinePlus = ('nextPointPlus {} sum(charCountPlus) {} len(linePlus) {} inWaitingPlus() {} linePlus: {}').format(nextPointPlus, sum(charCountPlus), len(linePlus), self.sPlus.inWaiting(), linePlus)
+                #logLinePlus = ('nextPointPlus {} sum(charCountPlus) {} len(linePlus) {} inWaitingPlus() {} linePlus: {}').format(nextPointPlus, sum(charCountPlus), len(linePlus), self.sPlus.inWaiting(), linePlus)
+                logLinePlus = ('nextPointPlus {} : {}').format(nextPointPlus, linePlus)
                 if self.sPlus.inWaiting()>3:
                     responseLine = self.sPlus.readline().strip().decode()
                     if (responseLine.find('ok') > -1) | (responseLine.find('error') > -1):
@@ -79,7 +82,8 @@ class trayectoryExecutor:
                 flagPlusNotFinished = False
             
             if (self.flagUseMinus & flagMinusNotFinished):
-                logLineMinus = ('nextPointMinus {} sum(charCountMinus) {} len(lineMinus) {} inWaitingMinus() {} lineMinus: {}').format(nextPointMinus, sum(charCountMinus), len(lineMinus), self.sMinus.inWaiting(), lineMinus)
+                #logLineMinus = ('nextPointMinus {} sum(charCountMinus) {} len(lineMinus) {} inWaitingMinus() {} lineMinus: {}').format(nextPointMinus, sum(charCountMinus), len(lineMinus), self.sMinus.inWaiting(), lineMinus)
+                logLineMinus = ('nextPointMinus {} : {}').format(nextPointMinus, lineMinus)
                 if self.sMinus.inWaiting()>3:
                     responseLine = self.sMinus.readline().strip().decode()
                     if (responseLine.find('ok') > -1) | (responseLine.find('error') > -1):
@@ -94,12 +98,12 @@ class trayectoryExecutor:
             else:
                 flagMinusNotFinished = False
 
-            print('\n\n' + logLinePlus)
-            print('\n' + logLineMinus)
-            f.write('\n\n' + logLinePlus)
-            f.write('\n\n' + logLineMinus)
+            print('\n' + logLineMinus + logLinePlus)
+            #print('\n' + logLineMinus)
+            f.write('\n' + logLineMinus + logLinePlus)
+            #f.write('\n' + logLineMinus)
 
-            #time.sleep(0.1)
+            time.sleep(0.01)
         f.close()
 
 

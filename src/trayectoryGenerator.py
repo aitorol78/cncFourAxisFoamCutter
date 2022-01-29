@@ -84,6 +84,14 @@ class trayectoryGenerator:
         self.sectionMinusTrayectoryX = np.hstack([self.sectionMinusEntryPointX,self.sectionMinusResampledCoordinatesX,self.sectionMinusExitPointX])
         self.sectionMinusTrayectoryY = np.hstack([self.sectionMinusEntryPointY,self.sectionMinusResampledCoordinatesY,self.sectionMinusExitPointY])
 
+        #compensateWireThickness(self):
+        # compute normal to curve
+        # add distance, wireThickness, in the direction of the normal to each point
+        self.sectionPlusTrayectoryX, self.sectionPlusTrayectoryY = \
+            self.computeCurveAtDistance(self.sectionPlusTrayectoryX, self.sectionPlusTrayectoryY, self.wpl.wireThickness)
+        self.sectionMinusTrayectoryX, self.sectionMinusTrayectoryY = \
+            self.computeCurveAtDistance(self.sectionMinusTrayectoryX, self.sectionMinusTrayectoryY, self.wpl.wireThickness)
+
         # translate points to wire planes along the lines connecting Zplus and zPlus surfaces
         self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wirePlusZpositon)
         self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wireMinusZpositon)
@@ -104,13 +112,13 @@ class trayectoryGenerator:
         self.wirePlusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wirePlusTrayectoryF[1:]])
         self.wireMinusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wireMinusTrayectoryF[1:]])
     
-    def compensateWireThickness(self):
-        # compute normal to curve
-        # add distance, wireThickness, in the direction of the normal to each point
-        self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = \
-            self.computeCurveAtDistance(self.wirePlusTrayectoryX, self.wirePlusTrayectoryY, self.wpl.wireThickness)
-        self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = \
-            self.computeCurveAtDistance(self.wireMinusTrayectoryX, self.wireMinusTrayectoryY, self.wpl.wireThickness)
+#    def compensateWireThickness(self):
+#        # compute normal to curve
+#        # add distance, wireThickness, in the direction of the normal to each point
+#        self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = \
+#            self.computeCurveAtDistance(self.wirePlusTrayectoryX, self.wirePlusTrayectoryY, self.wpl.wireThickness)
+#        self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = \
+#            self.computeCurveAtDistance(self.wireMinusTrayectoryX, self.wireMinusTrayectoryY, self.wpl.wireThickness)
 
     def computeCurveAtDistance(self, curveX, curveY, distance):
         dx = -np.diff(curveX)
