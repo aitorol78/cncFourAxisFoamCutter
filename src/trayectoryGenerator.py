@@ -109,8 +109,8 @@ class trayectoryGenerator:
         # and modify ill calculated first velocity (0/0 division)
         # it will require a timed stop before starting movement to second point
         # to ensure that both profiles start at the very same time
-        self.wirePlusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wirePlusTrayectoryF[1:]])
-        self.wireMinusTrayectoryF = np.hstack([self.velocity, self.velocity, self.wireMinusTrayectoryF[1:]])
+        self.wirePlusTrayectoryF = np.hstack([self.velocity, self.wirePlusTrayectoryF])
+        self.wireMinusTrayectoryF = np.hstack([self.velocity, self.wireMinusTrayectoryF])
     
 #    def compensateWireThickness(self):
 #        # compute normal to curve

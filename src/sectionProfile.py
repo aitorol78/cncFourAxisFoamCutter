@@ -8,7 +8,7 @@ class sectionProfile:
         self.name = ''
         self.profileCoordinatesX = np.zeros(1)
         self.profileCoordinatesY = np.zeros(1)
-    
+        
     def loadFromFile(self, fileName):
         self.fileName = fileName
         self.name = 'ToDo rename profile'
@@ -16,4 +16,4 @@ class sectionProfile:
         data = pd.read_csv(self.fileName, sep=r'\s+', header=0)
         self.profileCoordinatesX = data.values[:,0].tolist()
         self.profileCoordinatesY = data.values[:,1].tolist()
-
+        

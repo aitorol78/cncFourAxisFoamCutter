@@ -7,6 +7,7 @@ class sectionLayout(sectionProfile):
         self.templateHeight = 10
         self.chord = 100
         self.washoutAngle_deg = 0
+        self.flagInvertProfile = False # Y = -Y
 
         #self.thickness = 0
         #self.camber = 0
@@ -22,8 +23,11 @@ class sectionLayout(sectionProfile):
         profileChord = self.computeProfileChord()
         scale = self.chord / profileChord
         angle = self.washoutAngle_deg * math.pi / 180
+        if self.flagInvertProfile:
+            self.profileCoordinatesX = np.flip(self.profileCoordinatesX)
+            self.profileCoordinatesY = -np.flip(self.profileCoordinatesY)
+            angle = -angle
         rotationMatrix = np.array([[math.cos(angle),-math.sin(angle)],[math.sin(angle),math.cos(angle)]])
-        
         pointsProfileDefinition = np.array([self.profileCoordinatesX, self.profileCoordinatesY])
         pointsLayout = np.matmul(scale * rotationMatrix, pointsProfileDefinition)
 
