@@ -84,15 +84,15 @@ class trayectoryGenerator:
         self.sectionMinusTrayectoryX = np.hstack([self.sectionMinusEntryPointX,self.sectionMinusResampledCoordinatesX,self.sectionMinusExitPointX])
         self.sectionMinusTrayectoryY = np.hstack([self.sectionMinusEntryPointY,self.sectionMinusResampledCoordinatesY,self.sectionMinusExitPointY])
 
-        #compensateWireThickness(self):
+        #compensateWireThickness:
         # compute normal to curve
         # add distance, wireThickness, in the direction of the normal to each point
         self.sectionPlusTrayectoryX, self.sectionPlusTrayectoryY = \
-            self.computeCurveAtDistance(self.sectionPlusTrayectoryX, self.sectionPlusTrayectoryY, self.wpl.wireThickness)
+            self.computeCurveAtDistance(self.sectionPlusTrayectoryX, self.sectionPlusTrayectoryY, self.wpl.wireThicknessPlus)
         self.sectionMinusTrayectoryX, self.sectionMinusTrayectoryY = \
-            self.computeCurveAtDistance(self.sectionMinusTrayectoryX, self.sectionMinusTrayectoryY, self.wpl.wireThickness)
+            self.computeCurveAtDistance(self.sectionMinusTrayectoryX, self.sectionMinusTrayectoryY, self.wpl.wireThicknessMinus)
 
-        # translate points to wire planes along the lines connecting Zplus and zPlus surfaces
+        # translate points to wire planes along the lines connecting Zplus and zMinus surfaces
         self.wirePlusTrayectoryX, self.wirePlusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wirePlusZpositon)
         self.wireMinusTrayectoryX, self.wireMinusTrayectoryY = self.traslateTrayectoryToWirePlane( self.machine.wireMinusZpositon)
 

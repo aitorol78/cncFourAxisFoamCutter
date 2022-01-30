@@ -15,5 +15,6 @@ class wingPanelLayout:
         self.leadOutDistance = 20
 
         self.skinThickness = 0
-        self.wireThickness = 0.2
+        self.wireThicknessMinus = 0.2
+        self.wireThicknessPlus = 0.2
         self.foamThickness = 0

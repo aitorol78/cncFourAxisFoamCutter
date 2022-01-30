@@ -29,27 +29,28 @@ if __name__ == "__main__":
     sectionLayoutZplus.templateHeight = 0   
 
     sectionLayoutZminus = sectionLayout()
-    sectionLayoutZminus.loadFromFile(os.path.join('data','profiles','ag25.dat'))
+    sectionLayoutZminus.loadFromFile(os.path.join('data','profiles','MH60.dat'))
     sectionLayoutZminus.chord = 115 #4.5*25.4
-    sectionLayoutZminus.washoutAngle_deg = 3
+    sectionLayoutZminus.washoutAngle_deg = 2
     sectionLayoutZminus.templateHeight = 0
 
     wpl = wingPanelLayout()
     wpl.sectionPlusLayout = sectionLayoutZplus
-    wpl.sectionPlusZposition = 500
+    wpl.sectionPlusZposition = 530
     wpl.sectionPlusLeadingEdgeX = 0
     wpl.sectionMinusLayout = sectionLayoutZminus
-    wpl.sectionMinusZposition = 75
+    wpl.sectionMinusZposition = 30
     wpl.sectionMinusLeadingEdgeX = 257
     wpl.leadInDistance = 20
     wpl.leadOutDistance = 20
     wpl.skinThickness = 0
-    wpl.wireThickness = 0.7
+    wpl.wireThicknessMinus = 0.7 + (11-8)/2
+    wpl.wireThicknessPlus = 1.0
     wpl.foamThickness = 0
 
     mch = machine()
-    mch.wirePlusZpositon = 640
-    mch.wireMinusZpositon = -30
+    mch.wirePlusZpositon = 630
+    mch.wireMinusZpositon = -55
 
     tr = trayectoryGenerator()
 
@@ -57,36 +58,13 @@ if __name__ == "__main__":
     tr.wpl = wpl
     tr.numStationsUpperSurface = 100
     tr.numStationsLowerSurface = 100
-    tr.velocity = 125*5
+    tr.velocity = 125
     tr.generateTrayectory()
-    tr.wirePlusTrayectoryX = tr.wirePlusTrayectoryX - tr.wirePlusTrayectoryX[0]
-    tr.wirePlusTrayectoryY = tr.wirePlusTrayectoryY - tr.wirePlusTrayectoryY[0]
-    tr.wireMinusTrayectoryX = tr.wireMinusTrayectoryX - tr.wireMinusTrayectoryX[0]
-    tr.wireMinusTrayectoryY = tr.wireMinusTrayectoryY - tr.wireMinusTrayectoryY[0]
-    tr.generateVelocityVectors()
-
-    fig, axs = plt.subplots(2,2, sharex=False)
-    axs[0,0].plot(tr.sectionMinusTrayectoryX, tr.sectionMinusTrayectoryY)
-    axs[1,0].plot(tr.wireMinusTrayectoryX, tr.wireMinusTrayectoryY,'blue')
-    axs[0,1].plot(tr.sectionPlusTrayectoryX, tr.sectionPlusTrayectoryY)
-    axs[1,1].plot(tr.wirePlusTrayectoryX, tr.wirePlusTrayectoryY,'blue')
-
-    fig, axs2 = plt.subplots(2,2, sharex=False)
-    axs2[0,0].plot(tr.wireMinusTrayectoryX)
-    axs2[1,0].plot(tr.wireMinusTrayectoryY)
-    axs2[0,1].plot(tr.wirePlusTrayectoryX)
-    axs2[1,1].plot(tr.wirePlusTrayectoryY)
-
-    #tr.compensateWireThickness()
-
-    axs[1,0].plot(tr.wireMinusTrayectoryX, tr.wireMinusTrayectoryY,'red')
-    axs[1,1].plot(tr.wirePlusTrayectoryX, tr.wirePlusTrayectoryY,'red')
-    plt.show()
 
     print('\n')
     print(('plus  initial Y (mm): {:.1f}').format(tr.wirePlusTrayectoryY[0]))
-    print((  'minus initial Y (mm): {:.1f}').format(tr.wireMinusTrayectoryY[0]))
-    print((  '(plus-minus) initial Y (mm): {:.1f}').format(tr.wirePlusTrayectoryY[0] - tr.wireMinusTrayectoryY[0]))
+    print(('minus initial Y (mm): {:.1f}').format(tr.wireMinusTrayectoryY[0]))
+    print(('(plus-minus) initial Y (mm): {:.1f}').format(tr.wirePlusTrayectoryY[0] - tr.wireMinusTrayectoryY[0]))
     print('\n')
     print(('plus   X travel (mm): {:.1f}').format( max(tr.wirePlusTrayectoryX) - min(tr.wirePlusTrayectoryX) ))
     print(('minus  X travel (mm): {:.1f}').format( max(tr.wireMinusTrayectoryX) - min(tr.wireMinusTrayectoryX) ))
@@ -94,7 +72,24 @@ if __name__ == "__main__":
     print(('plus   Y travel (mm): {:.1f}').format( max(tr.wirePlusTrayectoryY) - min(tr.wirePlusTrayectoryY) ))
     print(('minus  Y travel (mm): {:.1f}').format( max(tr.wireMinusTrayectoryY) - min(tr.wireMinusTrayectoryY) ))
     print('\n')
-    
+
+    fig, axs = plt.subplots(2,2, sharex=False)
+    axs[0,0].plot(tr.sectionMinusTrayectoryX, tr.sectionMinusTrayectoryY)
+    axs[1,0].plot(tr.wireMinusTrayectoryX, tr.wireMinusTrayectoryY,'red')
+    axs[0,1].plot(tr.sectionPlusTrayectoryX, tr.sectionPlusTrayectoryY)
+    axs[1,1].plot(tr.wirePlusTrayectoryX, tr.wirePlusTrayectoryY,'red')
+    axs[0,0].axis('equal')
+    axs[1,0].axis('equal')
+    axs[0,1].axis('equal')
+    axs[1,1].axis('equal')
+
+    fig, axs2 = plt.subplots(2,2, sharex=False)
+    axs2[0,0].plot(tr.wireMinusTrayectoryX)
+    axs2[1,0].plot(tr.wireMinusTrayectoryY)
+    axs2[0,1].plot(tr.wirePlusTrayectoryX)
+    axs2[1,1].plot(tr.wirePlusTrayectoryY)
+   
+
     fig = plt.figure()    
     ax = fig.gca(projection='3d')
     ax.plot(tr.sectionPlusResampledCoordinatesX, tr.sectionPlusResampledCoordinatesY,  tr.wpl.sectionPlusZposition)
@@ -107,16 +102,21 @@ if __name__ == "__main__":
     plt.ylabel('Y')
     #plt.zlabel('Z')
     plt.show(block=False)
-
     
 
+    tr.wirePlusTrayectoryX = tr.wirePlusTrayectoryX - tr.wirePlusTrayectoryX[0]
+    tr.wirePlusTrayectoryY = tr.wirePlusTrayectoryY - tr.wirePlusTrayectoryY[0]
+    tr.wireMinusTrayectoryX = tr.wireMinusTrayectoryX - tr.wireMinusTrayectoryX[0]
+    tr.wireMinusTrayectoryY = tr.wireMinusTrayectoryY - tr.wireMinusTrayectoryY[0]
+    tr.generateVelocityVectors()
+    
     #print('ax.azim {}'.format(ax.azim)) # -89
     #print('ax.elev {}'.format(ax.elev)) # 114
     #print('ax.roll {}'.format(ax.roll))
 
     if flagMoveMachine:
 
-        input('press a button to start moving')
+        input('press a button to start moving ')
 
         ex = trayectoryExecutor()
         ex.portPlus="/dev/ttyUSB1"
